@@ -1,6 +1,3 @@
-# source activate nbodykit-env on nersc
-#from nbodykit.cosmology import correlation
-#from nbodykit import cosmology
 import numpy as np
 import math
 from scipy import optimize as op
@@ -9,11 +6,6 @@ import time
 from scipy.integrate import romberg
 from scipy.interpolate import InterpolatedUnivariateSpline as Spline
 import scipy as sp
-
-dat = np.loadtxt('Desktop/cfz0_4e3.txt')
-R = dat[:,0]
-cflinr = dat[:,1]
-interp_cf_lin = lambda x: np.interp(x, R, cflinr)
 
 def solve(a, b, c, d):
 	'''CUBIC ROOT SOLVER
@@ -134,13 +126,19 @@ def fastinv(mat):
 		step1[:,3]]
 	return inv_M
 	
-def get_poly_coeffs(Rmax, xmatT_all, Y):
+#def get_poly_coeffs(Rmax, xmatT_all, Y):
+def get_poly_coeffs(Rmax, interp_cf_lin):
 	'''gets polynomial coefficients given some rmax'''
-	ind = int(Rmax * 200.) + 1
+	#ind = int(Rmax * 1000.) + 1
 	# precompute xmatT to speed things up
-	xmatT = xmatT_all[:,:ind]
+	#xmatT = xmatT_all[:,:ind]
+	delta = Rmax / 99.
+	r = np.arange(100) * delta
+	rsq = r * r
+	xmatT = np.array([np.ones_like(r), r, rsq, rsq * r])
 	inv= fastinv(np.dot(xmatT, xmatT.T))
-	xTy = np.dot(xmatT, Y[:ind])
+	#xTy = np.dot(xmatT, Y[:ind])
+	xTy = np.dot(xmatT, rsq * interp_cf_lin(r))
 
 	# a bit faster to do this because then I don't have to convert stuff to np.array
 	return (np.dot(inv[0],xTy),
@@ -173,47 +171,15 @@ def getR(c0,c1,c2,c3,Dz):
 		return roots
 
 	
-def sigma(R,y,dy,ysqkernel):
+def sigma(R, y, dy, ysqkernel, interp_cf_lin):
 	'''Directly do the integral for the "Daniel" method.
 	Pre assign y and ysqkernel to save time in the optimization.
 	We find that 100 sampling points give accuracy of 10^-3 as compared
 	to Romberg'''
 	return (dy * np.sum(interp_cf_lin(y*R) * ysqkernel))**0.5
 
-def sigma_rom(R):
+def sigma_rom(R, interp_cf_lin):
 	'''Romberg version of direct integral.  A factor of 50 slower
 	than np.sum method, and not much more accurate'''
 	return np.sqrt(romberg(lambda y: y * y * interp_cf_lin(y*R) * kernel(y), 0, 2))
 	
-Dzs = np.loadtxt('Desktop/Dz.txt')
-
-js = [0, 100, 200, 300, 400, 500, 600]
-
-for j in js:
-	Dz = Dzs[j]
-	# Pre-assign y-kernel for the direct approach
-	y = np.linspace(0,2,100)
-	dy = y[1]-y[0]
-	ysqkernel = y * y * kernel(y)
-	%timeit op.brentq(lambda R: sigma(R,y,dy,ysqkernel) - 1./Dz, 0.0, 8.0)
-	Rnl_actual = op.brentq(lambda R: sigma(R,y,dy,ysqkernel) - 1./Dz, 0.0, 8.0)
-	# can we do better than brentq on the optimizer?
-
-	# Get R_NL for a power-law cosmology to set the fitting range
-	# Formulae taken from https://gist.github.com/lgarrison/7e41ee280c57554e256b834ac5c3f753?short_path=2385d0c#file-scale_free_sigma8-ipynb
-	norm = 71.38238397491413
-	sigma2_norm = -1.8 * norm/(np.pi * gamma(4.) * math.cos(-np.pi))
-	rnl_analytic = op.brentq(lambda R: sigma2_norm ** 0.5 * R**-0.5 - 1./Dz, 0.01, 10.0)
-	%timeit op.brentq(lambda R: sigma2_norm ** 0.5 * R**-0.5 - 1./Dz, 0.01, 10.0)
-
-	# Pre-load some matrices for polynomial coefficient fitting
-	Rsq = R * R
-	Y = Rsq * cflinr
-	xmatT_all = np.array([np.ones_like(R), R, R * R, Rsq * R])
-	c0,c1,c2,c3 = get_poly_coeffs(2.*rnl_analytic, xmatT_all, Y)
-	%timeit get_poly_coeffs(2.*rnl_analytic, xmatT_all, Y)
-
-	%timeit getR(c0,c1,c2,c3,Dz)
-	Rnl = getR(c0,c1,c2,c3,Dz)
-
-	print j, np.abs(Rnl-Rnl_actual)/Rnl_actual
