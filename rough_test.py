@@ -7,9 +7,9 @@ plt.ion()
 plt.show()
 
 
-dat = np.loadtxt('cfz0_2e4.txt')
+dat = np.loadtxt('cosmo_files/default/cfz0_2e4.txt')
 
-Dzs = np.loadtxt('Dz.txt')
+Dzs = np.loadtxt('cosmo_files/default/Dz.txt')
 
 R = dat[:,0]
 cflinr = dat[:,1]

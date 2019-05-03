@@ -36,7 +36,6 @@ for subdir in subdirs:
 	xmatT_all = np.array([np.ones_like(R), R, R * R, Rsq * R])
 
 	# Get R_NL for a power-law cosmology to set the fitting range
-	# Formulae taken from https://gist.github.com/lgarrison/7e41ee280c57554e256b834ac5c3f753?short_path=2385d0c#file-scale_free_sigma8-ipynb
 	norm = float(np.loadtxt(dir + subdir + 'norm.txt'))
 	sigma2_norm = -1.8 * norm/(np.pi * gamma(4.) * math.cos(-np.pi))
 

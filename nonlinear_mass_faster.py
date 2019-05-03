@@ -132,8 +132,8 @@ def get_poly_coeffs(Rmax, interp_cf_lin):
 	#ind = int(Rmax * 1000.) + 1
 	# precompute xmatT to speed things up
 	#xmatT = xmatT_all[:,:ind]
-	delta = Rmax / 99.
-	r = np.arange(100) * delta
+	delta = Rmax / 999.
+	r = np.arange(1000) * delta
 	rsq = r * r
 	xmatT = np.array([np.ones_like(r), r, rsq, rsq * r])
 	inv= fastinv(np.dot(xmatT, xmatT.T))
@@ -145,6 +145,33 @@ def get_poly_coeffs(Rmax, interp_cf_lin):
 	 inv[1][0] * xTy[0] + inv[1][1] * xTy[1] + inv[1][2] * xTy[2] + inv[1][3] * xTy[3],
 	 inv[2][0] * xTy[0] + inv[2][1] * xTy[1] + inv[2][2] * xTy[2] + inv[2][3] * xTy[3],
 	 np.dot(inv[3],xTy))
+	 
+def get_poly_coeffs_taylor(om0, ob0, ns, zind):
+	'''gets polynomial coefficients in Taylor approximation'''
+	om0_fid = 0.3111
+
+	ob0_fid = 0.04897
+
+	ns_fid = 0.9665
+	
+	om0_file = np.loadtxt('om0_1st_order_taylor.txt')
+	ob0_file = np.loadtxt('ob0_1st_order_taylor.txt')
+	ns_file  = np.loadtxt('ns_1st_order_taylor.txt')
+	
+	om0z = om0_file[zind,:]
+	ob0z = ob0_file[zind,:]
+	nsz = ns_file[zind,:]
+	
+	c0 = (om0z[1] * (om0 - om0_fid) + om0z[2] + ob0z[1] * (ob0 - ob0_fid)
+		 + nsz[1] * (ns - ns_fid))
+	c1 = (om0z[3] * (om0 - om0_fid) + om0z[4] + ob0z[3] * (ob0 - ob0_fid)
+		 + nsz[3] * (ns - ns_fid))
+	c2 = (om0z[5] * (om0 - om0_fid) + om0z[6] + ob0z[5] * (ob0 - ob0_fid)
+		 + nsz[5] * (ns - ns_fid))
+	c3 = (om0z[7] * (om0 - om0_fid) + om0z[8] + ob0z[7] * (ob0 - ob0_fid)
+		 + nsz[7] * (ns - ns_fid))
+	
+	return c0, c1, c2, c3
 	 
 def getR(c0,c1,c2,c3,Dz):
 	'''Finds R'''
