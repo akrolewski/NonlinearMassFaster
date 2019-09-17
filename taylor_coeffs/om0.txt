@@ -1,0 +1,1 @@
+# Slope and intercept for c0, c1, c2, c3
