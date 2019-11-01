@@ -8,9 +8,19 @@ from scipy.interpolate import InterpolatedUnivariateSpline as Spline
 import scipy as sp
 
 # Load Taylor coefficients
-om0_file = np.fromfile('taylor_coeffs/om0.bin').reshape((61,9))
-ob0_file = np.fromfile('taylor_coeffs/ob0.bin').reshape((61,9))
-ns_file = np.fromfile('taylor_coeffs/ns.bin').reshape((61,9))
+#om0_file = np.fromfile('taylor_coeffs_kmax4/om0.bin').reshape((61,9))
+#ob0_file = np.fromfile('taylor_coeffs_kmax4/ob0.bin').reshape((61,9))
+#ns_file = np.fromfile('taylor_coeffs_kmax4/ns.bin').reshape((61,9))
+
+all_file = np.fromfile('taylor_coeffs_camb_kmax4_rmax_fourier/all_coeffs.bin').reshape((61,16))
+
+
+#c0_file = np.fromfile('taylor_coeffs_kmax4/c0.bin').reshape((61,4))
+#c1_file = np.fromfile('taylor_coeffs_kmax4/c1.bin').reshape((61,4))
+#c2_file = np.fromfile('taylor_coeffs_kmax4/c2.bin').reshape((61,4))
+#c3_file = np.fromfile('taylor_coeffs_kmax4/c3.bin').reshape((61,4))
+
+
 
 def solve(a, b, c, d):
 	'''CUBIC ROOT SOLVER
@@ -180,28 +190,87 @@ def get_poly_coeffs_taylor(om0, ob0, ns, z):
 
 	ns_fid = 0.9665
 	
-	taylor_om0 = nearest_neighbor(z, om0_file)
+	#taylor_om0 = nearest_neighbor(z, om0_file)
 	
-	taylor_ob0 = nearest_neighbor(z, ob0_file)
+	#taylor_ob0 = nearest_neighbor(z, ob0_file)
 	
-	taylor_ns = nearest_neighbor(z, ns_file)
+	#taylor_ns = nearest_neighbor(z, ns_file)
+	
+	taylor_all = nearest_neighbor(z, all_file)
     
 	delta_om0 = om0 - om0_fid
 	delta_ob0 = ob0 - ob0_fid
 	delta_ns = ns - ns_fid
 	
-	c0 = (taylor_om0[1] * (delta_om0) + taylor_om0[2] + taylor_ob0[1] * (delta_ob0)
-		 + taylor_ns[1] * (delta_ns))
-	c1 = (taylor_om0[3] * (delta_om0) + taylor_om0[4] + taylor_ob0[3] * (delta_ob0)
-		 + taylor_ns[3] * (delta_ns))
-	c2 = (taylor_om0[5] * (delta_om0) + taylor_om0[6] + taylor_ob0[5] * (delta_ob0)
-		 + taylor_ns[5] * (delta_ns))
-	c3 = (taylor_om0[7] * (delta_om0) + taylor_om0[8] + taylor_ob0[7] * (delta_ob0)
-		 + taylor_ns[7] * (delta_ns))
+	c0 = (taylor_all[0] + taylor_all[1] * (delta_om0) + taylor_all[2] * (delta_ob0)
+		 + taylor_all[3] * (delta_ns))
+	c1 = (taylor_all[4] + taylor_all[5] * (delta_om0) + taylor_all[6] * (delta_ob0)
+		 + taylor_all[7] * (delta_ns))
+	c2 = (taylor_all[8] + taylor_all[9] * (delta_om0) + taylor_all[10] * (delta_ob0)
+		 + taylor_all[11] * (delta_ns))
+	c3 = (taylor_all[12] + taylor_all[13] * (delta_om0) + taylor_all[14] * (delta_ob0)
+		 + taylor_all[15] * (delta_ns))		 
+	
+	return c0, c1, c2, c3
+	
+
+def get_poly_coeffs_taylor_vec(om0, ob0, ns, z):
+	'''gets polynomial coefficients in Taylor approximation'''
+	om0_fid = 0.3096
+
+	ob0_fid = 0.04897
+
+	ns_fid = 0.9665
+	
+	taylor_all = nearest_neighbor(z, all_file)
+	
+    
+	delta_om0 = om0 - om0_fid
+	delta_ob0 = ob0 - ob0_fid
+	delta_ns = ns - ns_fid
+	
+	#c0_arr = np.array([0,1,0,0,0,delta_om0,0,0,0,delta_ob0,0,0,0,delta_ns,0,0,0])
+	c0_arr = np.zeros(16)
+	c0_arr[0] = 1.
+	c0_arr[1] = delta_om0
+	c0_arr[2] = delta_ob0
+	c0_arr[3] = delta_ns
+	c0 = np.dot(c0_arr,taylor_all)
+	
+	#c1_arr = np.array([0,0,1,0,0,0,delta_om0,0,0,0,delta_ob0,0,0,0,delta_ns,0,0])
+	c1_arr = np.zeros(16)
+	c1_arr[4] = 1.
+	c1_arr[5] = delta_om0
+	c1_arr[6] = delta_ob0
+	c1_arr[7] = delta_ns
+	c1 = np.dot(c1_arr,taylor_all)
+	
+	#c2_arr = np.array([0,0,0,1,0,0,0,delta_om0,0,0,0,delta_ob0,0,0,0,delta_ns,0])
+	c2_arr = np.zeros(16)
+	c2_arr[8] = 1.
+	c2_arr[9] = delta_om0
+	c2_arr[10] = delta_ob0
+	c2_arr[11] = delta_ns
+	c2 = np.dot(c2_arr,taylor_all)
+	
+	#c3_arr = np.array([0,0,0,0,1,0,0,0,delta_om0,0,0,0,delta_ob0,0,0,0,delta_ns])
+	c3_arr = np.zeros(16)
+	c3_arr[12] = 1.
+	c3_arr[13] = delta_om0
+	c3_arr[14] = delta_ob0
+	c3_arr[15] = delta_ns
+	c3 = np.dot(c3_arr,taylor_all)
+	
+	# this is 28.6 mus versus 13.5 mus for the other version
+	# seems like all the time is going into np.array
+	# and np.dot
+	# so might be inefficient array formation?
+	# are there faster alternatives to np.dot? 
 		 
 	
 	return c0, c1, c2, c3
 	
+
 	
 def get_poly_coeffs_taylor_quad(om0, ob0, ns, z):
 	'''gets polynomial coefficients in Taylor approximation'''
@@ -389,13 +458,13 @@ def get_poly_coeffs_taylor_second_order(om0, ob0, ns, z):
 	#return taylor_om0_2, taylor_om0_4, taylor_om0_6, taylor_om0_8
 
 	 
-def getR(c0,c1,c2,c3,Dz):
+def getR(c0,c1,c2,c3,deltac_sq,Dz):
 	'''Finds R'''
 	a0 = 2.25 * c0
 	a1 = 1.2 * c1
 	a3 = (36./35.) * c3
 
-	roots = solve(a3, c2 - 1./(Dz * Dz), a1, a0)
+	roots = solve(a3, c2 - deltac_sq/(Dz * Dz), a1, a0)
 	#print roots
 
 	# Pick the correct root.
@@ -415,7 +484,7 @@ def getR(c0,c1,c2,c3,Dz):
 		
 def get_rnl_fid(z):
 	'''Gets fiducial RNL for setting the fitting range.'''
-	rnl_fid_file = np.loadtxt('fiducial_rnl.txt')
+	rnl_fid_file = np.loadtxt('fiducial_rnl_deltac_kmax4.txt')
 	return fast_interpolate(z, rnl_fid_file, 1)
 		
 def rnl_faster(interp_cf_lin, z, fitting_range_mode='fiducial', pk=1.0):
@@ -451,6 +520,29 @@ def sigma_Pk(R, k, lnk, pklin, spacing='log10'):
 	bess = (3. * spherical_jn(1, kr))/kr
 	#return (dlnk/ (2. * np.pi * np.pi) * np.sum(k * k ** 2. * bess * bess * pklin)) ** 0.5
 	return (1./(2.* np.pi * np.pi) * np.trapz(k * k ** 2. * bess * bess * pklin, x=lnk)) ** 0.5
+	#else:
+	#	print('Spacing must be logarithmic base 10 (log10) or linear (linear).')
+	#	return None
+	
+def sigma_Pk_smoothing(R, k, lnk, pklin, ksmooth, spacing='log10'):
+	'''Computes sigma in Fourier space using the standard definition.'''
+	if R <= 0:
+		# Don't want nan values if R <= 0.
+		# So set negative R to a small positive value
+		# to ensure continuity
+		R = 1e-6
+	#if spacing == 'linear':
+	#	dk = k[1]-k[0]
+	#	kr = k * R
+	#	bess = (3 * spherical_jn(1, kr))/kr
+	#	return dk / (2. * np.pi * np.pi) * np.sum(k * k * bess * bess * pklin)
+	#elif spacing == 'log10':
+	#lnk = np.log(k)
+	dlnk = lnk[1]-lnk[0]
+	kr = k * R
+	bess = (3. * spherical_jn(1, kr))/kr
+	#return (dlnk/ (2. * np.pi * np.pi) * np.sum(k * k ** 2. * bess * bess * pklin)) ** 0.5
+	return (1./(2.* np.pi * np.pi) * np.trapz(k * k ** 2. * bess * bess * pklin * np.exp(-(k/ksmooth)**2.), x=lnk)) ** 0.5
 	#else:
 	#	print('Spacing must be logarithmic base 10 (log10) or linear (linear).')
 	#	return None
