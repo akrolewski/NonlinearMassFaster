@@ -76,18 +76,10 @@ for k,param in enumerate(params):
 
 			rnl_analytic = op.brentq(lambda R: nlm.sigma_pl(sigma2_norm, -2, R) - delta_c/Dz, 0.01, 8.0)
 
-			try:
-				Rnl_actual = op.newton(lambda R: nlm.sigma(R,y,dy,ysqkernel,interp_cf_lin) - delta_c/Dz, rnl_analytic)
-			except RuntimeError:
-				Rnl_actual = op.newton(lambda R: nlm.sigma(R,y,dy,ysqkernel,interp_cf_lin) - delta_c/Dz, 0.1)
+			Rnl_actual = op.brentq(lambda R: nlm.sigma(R,y,dy,ysqkernel,interp_cf_lin) - delta_c/Dz, 0, 5)
 
 			lnk = np.log(pk[:,0])
-			try:
-				Rnl_fourier = op.newton(lambda R: nlm.sigma_Pk(R,pk[:,0],lnk,pk[:,1]) - delta_c/Dz, rnl_analytic)
-			except RuntimeError:
-				Rnl_fourier = op.newton(lambda R: nlm.sigma_Pk(R,pk[:,0],lnk,pk[:,1]) - delta_c/Dz, 0.1)
-			if Rnl_fourier < 0:
-				Rnl_fourier = op.newton(lambda R: nlm.sigma_Pk(R,pk[:,0],lnk,pk[:,1]) - delta_c/Dz, 0.01)
+			Rnl_fourier = op.brentq(lambda R: nlm.sigma_Pk(R,pk[:,0],lnk,pk[:,1]) - delta_c/Dz, 0, 5)
 
 	
 			c0,c1,c2,c3 = nlm.get_poly_coeffs(2.*Rnl_fourier, interp_cf_lin)
