@@ -3,6 +3,9 @@ import time
 import nonlinear_mass_faster as nlm
 from scipy import optimize as op
 
+# Fiducial rnl
+rnl_fid = np.loadtxt('fiducial_rnl.txt')
+
 delta_c = 1.686
 
 om0 = 0.3096
@@ -69,7 +72,7 @@ for k,param in enumerate(params):
 		for j,z in enumerate(zs):
 			Dz = nlm.growth_factor(z, om0_ind)
 
-			rnl_for_range = nlm.get_rnl_fid(z)
+			rnl_for_range = nlm.get_rnl_fid(z,rnl_fid)
 
 			rnl_analytic = op.brentq(lambda R: nlm.sigma_pl(sigma2_norm, -2, R) - delta_c/Dz, 0.01, 8.0)
 
