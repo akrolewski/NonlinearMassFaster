@@ -21,7 +21,6 @@ f.write('#z     PL time (s)      Fourier time (s)          Naive time (s)      C
 
 # NL scale defined in terms of deltac, threshold for nonlinear collapse
 deltac = 1.686
-deltac_sq = deltac * deltac
 
 # Timing test stuff
 ntest = 1000
@@ -76,7 +75,7 @@ for j,z in enumerate(zs):
 	t_poly_coeffs = timeit.timeit('test()',setup='from __main__ import test',number=ntest)/ntest
 
 	def test():
-		return nlm.getR(c0,c1,c2,c3,deltac_sq,Dz)
+		return nlm.getR(c0,c1,c2,c3,deltac,Dz)
 	Rnl = test()
 	t_getR = timeit.timeit('test()',setup='from __main__ import test',number=ntest)/ntest
 

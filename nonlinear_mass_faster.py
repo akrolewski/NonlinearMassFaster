@@ -153,7 +153,7 @@ def get_poly_coeffs_taylor(om0, ob0, ns, z):
 	
 
 	 
-def getR(c0,c1,c2,c3,deltac_sq,Dz):
+def getR(c0,c1,c2,c3,deltac,Dz):
 	'''Given the polynomial coefficients for s^2 xi(s), solves
 	for r at which \sigma_R D(z) = \delta_c, i.e. the nonlinear scale at redshift z.
 	\delta_c is typically 1.686 but we allow the user to solve for a different scale
@@ -162,7 +162,7 @@ def getR(c0,c1,c2,c3,deltac_sq,Dz):
 	a1 = 1.2 * c1
 	a3 = (36./35.) * c3
 
-	roots = solve(a3, c2 - deltac_sq/(Dz * Dz), a1, a0)
+	roots = solve(a3, c2 - deltac*deltac/(Dz * Dz), a1, a0)
 	#print roots
 	# Pick the correct root.
 	# roots only returns real roots--if there is only one, it's the right one, and move on
@@ -192,10 +192,11 @@ def fast_interpolate(z, om0_file):
 		return om0_file_lowind
 
 		
-def get_rnl_fid(z):
-	'''Gets fiducial RNL for setting the fitting range at redshift z.'''
-	rnl_fid_file = np.loadtxt('fiducial_rnl.txt')
-	return fast_interpolate(z, rnl_fid_file, 1)
+def get_rnl_fid(z, rnl_fid):
+	'''Gets fiducial RNL for setting the fitting range at redshift z,
+	where rnl_fid is the loaded RNL fiducial file with RNL at redshifts spaced
+	in steps \Delta z= 0.1'''
+	return nearest_neighbor(z, rnl_fid)[1]
 
 def sigma_Pk(R, k, lnk, pklin, spacing='log10'):
 	'''Computes sigma in Fourier space using the standard definition.

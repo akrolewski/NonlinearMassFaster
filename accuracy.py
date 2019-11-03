@@ -10,7 +10,7 @@ import math
 pk =  np.loadtxt('pklin/default.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy.txt','w')
@@ -38,7 +38,6 @@ rnl_fid = np.loadtxt('fiducial_rnl.txt')
 
 om = 0.3096
 delta_c = 1.686
-delta_c_sq = delta_c * delta_c
 
 for j,z in enumerate(zs):
 	Dz = nlm.growth_factor(z, om)
@@ -52,13 +51,13 @@ for j,z in enumerate(zs):
 
 	c0,c1,c2,c3 = nlm.get_poly_coeffs_taylor(0.3096, 0.04897, 0.9665, z)
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 	
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -72,7 +71,7 @@ f.close()
 pk =  np.loadtxt('pklin/sig8_075.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_sig8_075.txt','w')
@@ -115,14 +114,14 @@ for j,z in enumerate(zs):
 	c2 = c2 * (0.75/0.81)**2.
 	c3 = c3 * (0.75/0.81)**2.
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 
 	
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -137,7 +136,7 @@ f.close()
 pk =  np.loadtxt('pklin/sig8_087.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_sig8_087.txt','w')
@@ -180,13 +179,13 @@ for j,z in enumerate(zs):
 	c2 = c2 * (0.87/0.81)**2.
 	c3 = c3 * (0.87/0.81)**2.
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 	
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -202,7 +201,7 @@ f.close()
 pk =  np.loadtxt('pklin/random1.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_random1.txt','w')
@@ -239,13 +238,13 @@ for j,z in enumerate(zs):
 
 	c0,c1,c2,c3 = nlm.get_poly_coeffs_taylor(0.3129, 0.0490, 0.9669, z)
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 		
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -259,7 +258,7 @@ f.close()
 pk =  np.loadtxt('pklin/random2.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_random2.txt','w')
@@ -297,13 +296,13 @@ for j,z in enumerate(zs):
 
 	c0,c1,c2,c3 = nlm.get_poly_coeffs_taylor(0.3185, 0.0498, 0.9676, z)
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 		
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -319,7 +318,7 @@ f.close()
 pk =  np.loadtxt('pklin/random3.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_random3.txt','w')
@@ -357,13 +356,13 @@ for j,z in enumerate(zs):
 
 	c0,c1,c2,c3 = nlm.get_poly_coeffs_taylor(0.3146, 0.0479, 0.9616, z)
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 		
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -379,7 +378,7 @@ f.close()
 pk =  np.loadtxt('pklin/random4.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_random4.txt','w')
@@ -418,13 +417,13 @@ for j,z in enumerate(zs):
 
 	c0,c1,c2,c3 = nlm.get_poly_coeffs_taylor(0.3086, 0.0507, 0.9591, z)
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 		
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 	
 	accuracy_fourier_full_method = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 
@@ -441,7 +440,7 @@ f.close()
 pk =  np.loadtxt('pklin/random5.txt')
 
 # Specify your r-range
-rs = np.linspace(0,5,2e5+1) # experiment with the number of points...
+rs = np.linspace(0,5,2e5+1) 
 
 # output file
 f = open('accuracy_random5.txt','w')
@@ -484,14 +483,14 @@ for j,z in enumerate(zs):
 	c0,c1,c2,c3 = nlm.get_poly_coeffs_taylor(0.3004, 0.0504, 0.9663, z)
 
 
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 
 	accuracy_fourier = np.abs(Rnl-Rnl_fourier)/Rnl_fourier
 	
 	c0,c1,c2,c3 = nlm.get_poly_coeffs(1.9*rnl_fid[j,1], interp_cf_lin)
 		
-	Rnl = nlm.getR(c0,c1,c2,c3,delta_c*delta_c,Dz)
+	Rnl = nlm.getR(c0,c1,c2,c3,delta_c,Dz)
 
 
 	
