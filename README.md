@@ -4,8 +4,7 @@ Requires numpy, scipy for the main module, plus taylor_coeffs.bin and fiducial_r
 Requires camb to generate the power spectrum files
 
 The main module is "nonlinear_mass_faster.py" and an example is shown in "example.ipynb".
-One can simply use "nonlinear_mass_faster.py" + "taylor_coeffs.bin"
-+ "fiducial_rnl.txt" to either fit the polynomial
+One can simply use "nonlinear_mass_faster.py" + "taylor_coeffs.bin" + "fiducial_rnl.txt" to either fit the polynomial
 coefficients, or use the Taylor series in the default Planck18 cosmology.
 
 We also include various helper scripts in case the user wants to re-generate the Taylor
