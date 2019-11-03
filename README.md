@@ -1,5 +1,7 @@
 # README #
 
+python 2/3 compatible
+
 Requires numpy, scipy for the main module "nonlinear_mass_faster.py," plus "taylor_coeffs.bin" and "fiducial_rnl.txt"
 
 Requires camb to generate the power spectrum files
